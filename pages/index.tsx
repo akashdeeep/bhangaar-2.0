@@ -7,7 +7,7 @@ export default function Home() {
 	if (!session) {
 		return (
 			<Layout>
-				<div className="flex flex-col items-center justify-center min-h-screen py-2">
+				<div className="flex flex-col items-center justify-center ">
 					Not signed in <br />
 					<button onClick={() => signIn()}>Sign in</button>
 				</div>
@@ -17,8 +17,8 @@ export default function Home() {
 
 	return (
 		<Layout>
-			<div className="flex flex-col items-center justify-center min-h-screen py-2">
-				<div className="flex flex-col items-center justify-center min-h-screen py-2">
+			<div className="flex flex-col items-center justify-center">
+				<div className="flex flex-col items-center justify-center">
 					<Image
 						src={session?.user?.image}
 						alt="Picture of the author"
