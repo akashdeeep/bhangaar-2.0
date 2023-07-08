@@ -7,8 +7,6 @@ import productsIcon from "../public/box.png";
 import settingsIcon from "../public/settings.png";
 import { useRouter } from "next/router";
 
-console.log(logo);
-
 export default function Nav() {
 	const inactiveLink = "flex items-center space-x-2 hover:bg-green-700 rounded";
 	const activeLink = "flex items-center space-x-2 bg-green-700 rounded";
