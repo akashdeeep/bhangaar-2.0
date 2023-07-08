@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import axios from "axios";
 
 export default function AddProduct() {
 	const router = useRouter();
@@ -13,21 +14,16 @@ export default function AddProduct() {
 		image: "",
 	});
 
-	createProduct = async (req, res) => {
-		const { name, description, price, image } = req.body;
-		const newProduct = new Product({
-			name,
-			description,
-			price,
-			image,
-		});
+	async function createProduct(e) {
+		e.preventDefault();
+
 		try {
-			await newProduct.save();
-			res.status(201).json(newProduct);
-		} catch (error) {
-			res.status(409).json({ message: error.message });
+			const res = await axios.post("/api/products", product);
+			router.push("/products");
+		} catch (err) {
+			console.log(err);
 		}
-	};
+	}
 
 	return (
 		<Layout>
@@ -55,6 +51,8 @@ export default function AddProduct() {
 					<input
 						className="mb-5"
 						type="number"
+						min="1"
+						step="any"
 						placeholder="Product Price"
 						value={product.price}
 						onChange={(e) =>
@@ -65,6 +63,7 @@ export default function AddProduct() {
 					<input
 						className="mb-5"
 						type="file"
+						value={product.image}
 						onChange={(e) => setProduct({ ...product, image: e.target.value })}
 					/>
 					<button type="submit" className="btn-primary mt-5">
