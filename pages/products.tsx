@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import editIcon from "@/public/edit.png";
+import viewIcon from "@/public/analysis.png";
+import deleteIcon from "@/public/delete.png";
+import Image from "next/image";
 
 export default function Products() {
 	const router = useRouter();
@@ -44,11 +48,45 @@ export default function Products() {
 									{product.price}
 								</td>
 								<td className="border-collapse border border-black">
-									<button
-										className="btn-primary"
-										onClick={() => router.push(`/products/${product._id}`)}>
-										View
-									</button>
+									<div className="flex flex-row items-center justify-center gap-2">
+										<button
+											className="table-btn-primary"
+											onClick={() => router.push(`/products/${product._id}`)}>
+											<Image
+												src={viewIcon}
+												alt="Products"
+												width={24}
+												height={24}
+											/>
+											View
+										</button>
+										<button
+											className="table-btn-primary"
+											onClick={() =>
+												router.push(`/products/${product._id}/edit`)
+											}>
+											<Image
+												src={editIcon}
+												alt="Products"
+												width={24}
+												height={24}
+											/>
+											Edit
+										</button>
+										<button
+											className="table-btn-primary"
+											onClick={() =>
+												router.push(`/products/${product._id}/delete`)
+											}>
+											<Image
+												src={deleteIcon}
+												alt="Products"
+												width={24}
+												height={24}
+											/>
+											Delete
+										</button>
+									</div>
 								</td>
 							</tr>
 						))}
