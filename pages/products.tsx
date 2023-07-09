@@ -63,7 +63,7 @@ export default function Products() {
 										<button
 											className="table-btn-primary"
 											onClick={() =>
-												router.push(`/products/${product._id}/edit`)
+												router.push(`/products/edit/${product._id}`)
 											}>
 											<Image
 												src={editIcon}
@@ -76,7 +76,7 @@ export default function Products() {
 										<button
 											className="table-btn-primary"
 											onClick={() =>
-												router.push(`/products/${product._id}/delete`)
+												router.push(`/products/delete/${product._id}`)
 											}>
 											<Image
 												src={deleteIcon}
