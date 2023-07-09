@@ -9,24 +9,15 @@ export default async function handle(req, res) {
 	const db = await client.db();
 	const collection = await db.collection("Products");
 	if (method == "POST") {
-		const { name, price, description, image, category, quantity } = req.body;
-		const product = {
-			name,
-			price,
-			description,
-			image,
-			category,
-			quantity,
-			dateCreated: Date.now(),
-			dateUpdated: Date.now(),
-			dateDeleted: null,
-			isDeleted: false,
-		};
-		const result = await collection.insertOne(product);
-		res.status(200).json(result.ops);
+		const product = new Product(req.body);
+		await product.save();
+		res.json(product);
 	}
 	if (method == "GET") {
-		const result = await collection.find({ isDeleted: false }).toArray();
-		res.status(200).json(result);
+		if (req.query?.id) {
+			res.json(await Product.findById(req.query.id));
+		} else {
+			res.json(await Product.find({}));
+		}
 	}
 }
