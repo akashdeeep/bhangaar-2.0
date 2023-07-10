@@ -7,17 +7,24 @@ import { useEffect } from "react";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
-	const [product, setProduct] = useState({
-		name: props.product?.name || "",
-		description: props.product?.description || "",
-		price: props.product?.price || 0,
-		image: props.product?.image || "",
-	});
+	const [product, setProduct] = useState(
+		props.product || {
+			name: "",
+			description: "",
+			price: 0,
+			image: "",
+		}
+	);
 	console.log(product, "product");
 	const [goToProducts, setGoToProducts] = useState(false);
 
-	async function createProduct(e) {
+	async function saveProduct(e) {
 		e.preventDefault();
+		if (props.product) {
+			await axios.put("/api/products", product);
+			setGoToProducts(true);
+			return;
+		}
 		await axios.post("/api/products", product);
 		setGoToProducts(true);
 	}
@@ -33,9 +40,8 @@ export default function ProductForm(props) {
 	}, [props.product]);
 
 	return (
-		<form onSubmit={createProduct}>
+		<form onSubmit={saveProduct}>
 			<div className="flex flex-col items-center gap-2">
-				<h1 className="m-6 text-2xl font-bold text-center">Add Product</h1>
 				<label>Product Name</label>
 				<input
 					className="mb-5"
@@ -73,7 +79,7 @@ export default function ProductForm(props) {
 					onChange={(e) => setProduct({ ...product, image: e.target.value })}
 				/>
 				<button type="submit" className="btn-primary mt-5">
-					Add Product
+					Save
 				</button>
 			</div>
 		</form>

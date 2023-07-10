@@ -22,6 +22,7 @@ export default function EditProductPage() {
 
 	return (
 		<Layout>
+			<h1 className="m-6 text-2xl font-bold text-center">Edit Product</h1>
 			<ProductForm product={productInfo} />
 		</Layout>
 	);

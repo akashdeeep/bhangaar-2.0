@@ -51,7 +51,9 @@ export default function Products() {
 									<div className="flex flex-row items-center justify-center gap-2">
 										<button
 											className="table-btn-primary"
-											onClick={() => router.push(`/products/${product._id}`)}>
+											onClick={() =>
+												router.push(`/products/view/${product._id}`)
+											}>
 											<Image
 												src={viewIcon}
 												alt="Products"

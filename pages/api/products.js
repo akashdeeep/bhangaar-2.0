@@ -21,4 +21,19 @@ export default async function handle(req, res) {
 			res.json(await Product.find({}));
 		}
 	}
+	if (method == "PUT") {
+		const product = await Product.findById(req.body._id);
+		product.name = req.body.name;
+		product.description = req.body.description;
+		product.price = req.body.price;
+		product.image = req.body.image;
+		await product.save();
+		res.json(product);
+	}
+	if (method == "DELETE") {
+		if (req.query?.id) {
+			await Product.deleteOne({ _id: req.query?.id });
+			res.json({ message: "Product deleted" });
+		}
+	}
 }

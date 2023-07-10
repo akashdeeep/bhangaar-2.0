@@ -28,6 +28,7 @@ export default function AddProduct() {
 
 	return (
 		<Layout>
+			<h1 className="m-6 text-2xl font-bold text-center">Add Product</h1>
 			<ProductForm />
 		</Layout>
 	);
