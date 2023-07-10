@@ -1,28 +1,36 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { use, useState } from "react";
 import axios from "axios";
+import Router from "next/router";
+import { useEffect } from "react";
 
-export default function ProductForm() {
-	const router = useRouter();
-	const { data: session, status } = useSession();
+export default function ProductForm(props) {
+	console.log(props.product, "props.product");
 	const [product, setProduct] = useState({
-		name: "",
-		description: "",
-		price: 0,
-		image: "",
+		name: props.product?.name || "",
+		description: props.product?.description || "",
+		price: props.product?.price || 0,
+		image: props.product?.image || "",
 	});
+	console.log(product, "product");
+	const [goToProducts, setGoToProducts] = useState(false);
 
 	async function createProduct(e) {
 		e.preventDefault();
-
-		try {
-			const res = await axios.post("/api/products", product);
-			router.push("/products");
-		} catch (err) {
-			console.log(err);
-		}
+		await axios.post("/api/products", product);
+		setGoToProducts(true);
 	}
+
+	if (goToProducts) {
+		Router.push("/products");
+	}
+
+	useEffect(() => {
+		if (props.product) {
+			setProduct(props.product);
+		}
+	}, [props.product]);
 
 	return (
 		<form onSubmit={createProduct}>
