@@ -6,6 +6,7 @@ import Router from "next/router";
 import { useEffect } from "react";
 import uploadIcon from "../public/file.png";
 import Image from "next/image";
+import { headers } from "next/dist/client/components/headers";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
@@ -42,14 +43,19 @@ export default function ProductForm(props) {
 	}, [props.product]);
 
 	async function uploadImages(e) {
-		if (e.target.files.length === 0) return;
-		const files = Array.from(e.target.files);
-		const formData = new FormData();
-		files.forEach((file, i) => {
-			formData.append(i, file);
-		});
-		const images = await axios.post("/api/upload", formData);
-		setProduct({ ...product, images: images.data });
+		const files = ev.target?.files;
+		if (files?.length > 0) {
+			setIsUploading(true);
+			const data = new FormData();
+			for (const file of files) {
+				data.append("file", file);
+			}
+			const res = await axios.post("/api/upload", data);
+			setImages((oldImages) => {
+				return [...oldImages, ...res.data.links];
+			});
+			setIsUploading(false);
+		}
 	}
 
 	return (
