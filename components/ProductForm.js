@@ -4,6 +4,8 @@ import { use, useState } from "react";
 import axios from "axios";
 import Router from "next/router";
 import { useEffect } from "react";
+import uploadIcon from "../public/file.png";
+import Image from "next/image";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
@@ -12,7 +14,7 @@ export default function ProductForm(props) {
 			name: "",
 			description: "",
 			price: 0,
-			image: "",
+			images: [],
 		}
 	);
 	console.log(product, "product");
@@ -38,6 +40,17 @@ export default function ProductForm(props) {
 			setProduct(props.product);
 		}
 	}, [props.product]);
+
+	async function uploadImages(e) {
+		if (e.target.files.length === 0) return;
+		const files = Array.from(e.target.files);
+		const formData = new FormData();
+		files.forEach((file, i) => {
+			formData.append(i, file);
+		});
+		const images = await axios.post("/api/upload", formData);
+		setProduct({ ...product, images: images.data });
+	}
 
 	return (
 		<form onSubmit={saveProduct}>
@@ -71,13 +84,27 @@ export default function ProductForm(props) {
 						setProduct({ ...product, price: Number(e.target.value) })
 					}
 				/>
-				<label>Product Image</label>
-				<input
-					className="mb-5"
-					type="file"
-					value={product.image}
-					onChange={(e) => setProduct({ ...product, image: e.target.value })}
-				/>
+				<label>Product Images</label>
+				<div className="m-5">
+					<label className="flex items-center cursor-pointer justify-center border-dashed border border-gray-300 rounded-md h-32 w-32">
+						<Image
+							src={uploadIcon}
+							alt="upload icon"
+							height={100}
+							width={100}
+						/>
+						<input type="file" className="hidden" onChange={uploadImages} />
+					</label>
+					{!product.images.length && (
+						<p
+							className="text-center 
+						text-gray-400
+						mt-5
+						">
+							No images uploaded
+						</p>
+					)}
+				</div>
 				<button type="submit" className="btn-primary mt-5">
 					Save
 				</button>
