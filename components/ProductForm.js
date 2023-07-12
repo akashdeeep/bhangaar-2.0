@@ -48,39 +48,29 @@ export default function ProductForm(props) {
 	}, [props.product]);
 
 	function handleOnChange(changeEvent) {
-		const reader = new FileReader();
-
-		reader.onload = function (onLoadEvent) {
-			setImageSrc(onLoadEvent.target.result);
-			setUploadData(undefined);
+		const file = changeEvent.target.files[0];
+		const fileReader = new FileReader();
+		fileReader.onload = (e) => {
+			setImageSrc(e.target.result);
 		};
-
-		reader.readAsDataURL(changeEvent.target.files[0]);
+		fileReader.readAsDataURL(file);
 	}
 
 	async function handleUploadImages(e) {
 		e.preventDefault();
-		const form = e.currentTarget;
-		const fileInput = Array.from(form.elements).find(
-			({ name }) => name === "file"
-		);
 		const formData = new FormData();
-		for (const file of fileInput.files) {
-			formData.append("files", file);
-		}
+		formData.append("file", e.target.file.files[0]);
 		formData.append("upload_preset", "bhangaar2");
-		const { data } = await fetch(
-			"https://api.cloudinary.com/v1_1/dw4glj6qu/image/upload",
+		const res = await fetch(
+			"https://api.cloudinary.com/v1_1/bhangaar2/image/upload",
 			{
 				method: "POST",
 				body: formData,
 			}
-		).then((res) => res.json());
-
-		setUploadData(data);
-		setProduct({ ...product, images: [...product.images, data.secure_url] });
-
+		);
+		const data = await res.json();
 		console.log(data, "data");
+		setProduct({ ...product, images: [...product.images, data.secure_url] });
 	}
 
 	return (
