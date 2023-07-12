@@ -106,25 +106,27 @@ export default function ProductForm(props) {
 					}
 				/>
 
-				<form
-					onSubmit={handleUploadImages}
-					className="flex flex-col items-center gap-2"
-					onChange={handleOnChange}
-					method="POST">
-					<label>Upload Images</label>
+				<div className="flex flex-col items-center gap-2">
+					<label>Product Images</label>
+					<div className="flex flex-col items-center gap-2">
+						{product.images.map((image) => (
+							<img
+								className="w-20 h-20"
+								src={image}
+								alt="product image"
+								key={image}
+							/>
+						))}
+					</div>
 					<div className="flex flex-col items-center gap-2">
 						<input
 							className="mb-5"
 							type="file"
 							name="file"
-							multiple
-							accept="image/*"
+							onChange={handleUploadImages}
 						/>
-						<button type="submit" className="btn-primary">
-							Upload
-						</button>
 					</div>
-				</form>
+				</div>
 
 				<button type="submit" className="btn-primary mt-5">
 					Save
