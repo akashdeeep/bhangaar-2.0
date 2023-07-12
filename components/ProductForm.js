@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import uploadIcon from "../public/file.png";
 import Image from "next/image";
 import { headers } from "next/dist/client/components/headers";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
@@ -18,6 +19,10 @@ export default function ProductForm(props) {
 			images: [],
 		}
 	);
+
+	const [imageSrc, setImageSrc] = useState();
+	const [uploadData, setUploadData] = useState();
+
 	console.log(product, "product");
 	const [goToProducts, setGoToProducts] = useState(false);
 
@@ -42,20 +47,40 @@ export default function ProductForm(props) {
 		}
 	}, [props.product]);
 
-	async function uploadImages(e) {
-		const files = ev.target?.files;
-		if (files?.length > 0) {
-			setIsUploading(true);
-			const data = new FormData();
-			for (const file of files) {
-				data.append("file", file);
-			}
-			const res = await axios.post("/api/upload", data);
-			setImages((oldImages) => {
-				return [...oldImages, ...res.data.links];
-			});
-			setIsUploading(false);
+	function handleOnChange(changeEvent) {
+		const reader = new FileReader();
+
+		reader.onload = function (onLoadEvent) {
+			setImageSrc(onLoadEvent.target.result);
+			setUploadData(undefined);
+		};
+
+		reader.readAsDataURL(changeEvent.target.files[0]);
+	}
+
+	async function handleUploadImages(e) {
+		e.preventDefault();
+		const form = e.currentTarget;
+		const fileInput = Array.from(form.elements).find(
+			({ name }) => name === "file"
+		);
+		const formData = new FormData();
+		for (const file of fileInput.files) {
+			formData.append("files", file);
 		}
+		formData.append("upload_preset", "bhangaar2");
+		const { data } = await fetch(
+			"https://api.cloudinary.com/v1_1/dw4glj6qu/image/upload",
+			{
+				method: "POST",
+				body: formData,
+			}
+		).then((res) => res.json());
+
+		setUploadData(data);
+		setProduct({ ...product, images: [...product.images, data.secure_url] });
+
+		console.log(data, "data");
 	}
 
 	return (
@@ -90,27 +115,27 @@ export default function ProductForm(props) {
 						setProduct({ ...product, price: Number(e.target.value) })
 					}
 				/>
-				<label>Product Images</label>
-				<div className="m-5">
-					<label className="flex items-center cursor-pointer justify-center border-dashed border border-gray-300 rounded-md h-32 w-32">
-						<Image
-							src={uploadIcon}
-							alt="upload icon"
-							height={100}
-							width={100}
+
+				<form
+					onSubmit={handleUploadImages}
+					className="flex flex-col items-center gap-2"
+					onChange={handleOnChange}
+					method="POST">
+					<label>Upload Images</label>
+					<div className="flex flex-col items-center gap-2">
+						<input
+							className="mb-5"
+							type="file"
+							name="file"
+							multiple
+							accept="image/*"
 						/>
-						<input type="file" className="hidden" onChange={uploadImages} />
-					</label>
-					{!product.images.length && (
-						<p
-							className="text-center 
-						text-gray-400
-						mt-5
-						">
-							No images uploaded
-						</p>
-					)}
-				</div>
+						<button type="submit" className="btn-primary">
+							Upload
+						</button>
+					</div>
+				</form>
+
 				<button type="submit" className="btn-primary mt-5">
 					Save
 				</button>
