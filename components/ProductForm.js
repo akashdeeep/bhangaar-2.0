@@ -8,6 +8,8 @@ import uploadIcon from "../public/file.png";
 import Image from "next/image";
 import { headers } from "next/dist/client/components/headers";
 import { Cloudinary } from "@cloudinary/url-gen";
+import Dropzone from "react-dropzone";
+import { Container } from "reactstrap";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
@@ -20,10 +22,9 @@ export default function ProductForm(props) {
 		}
 	);
 
-	const [imageSrc, setImageSrc] = useState();
-	const [uploadData, setUploadData] = useState();
+	const [image, setImage] = useState();
+	const [loading, setLoading] = useState(false);
 
-	console.log(product, "product");
 	const [goToProducts, setGoToProducts] = useState(false);
 
 	async function saveProduct(e) {
@@ -47,19 +48,9 @@ export default function ProductForm(props) {
 		}
 	}, [props.product]);
 
-	function handleOnChange(changeEvent) {
-		const file = changeEvent.target.files[0];
-		const fileReader = new FileReader();
-		fileReader.onload = (e) => {
-			setImageSrc(e.target.result);
-		};
-		fileReader.readAsDataURL(file);
-	}
-
-	async function handleUploadImages(e) {
-		e.preventDefault();
+	async function handleDrop(acceptedFiles) {
 		const formData = new FormData();
-		formData.append("file", e.target.file.files[0]);
+		formData.append("file", acceptedFiles[0]);
 		formData.append("upload_preset", "bhangaar2");
 		const res = await fetch(
 			"https://api.cloudinary.com/v1_1/bhangaar2/image/upload",
@@ -71,6 +62,7 @@ export default function ProductForm(props) {
 		const data = await res.json();
 		console.log(data, "data");
 		setProduct({ ...product, images: [...product.images, data.secure_url] });
+		console.log(product, "product");
 	}
 
 	return (
@@ -105,28 +97,33 @@ export default function ProductForm(props) {
 						setProduct({ ...product, price: Number(e.target.value) })
 					}
 				/>
-
-				<div className="flex flex-col items-center gap-2">
-					<label>Product Images</label>
-					<div className="flex flex-col items-center gap-2">
-						{product.images.map((image) => (
-							<img
-								className="w-20 h-20"
-								src={image}
-								alt="product image"
-								key={image}
-							/>
-						))}
-					</div>
-					<div className="flex flex-col items-center gap-2">
-						<input
-							className="mb-5"
-							type="file"
-							name="file"
-							onChange={handleUploadImages}
-						/>
-					</div>
-				</div>
+				<Container>
+					<h1 className="text-center text-2xl font-bold">Upload Images</h1>
+					<Dropzone
+						className="flex justify-center items-center border-2 border-dashed border-gray-400 rounded-lg h-32 w-96"
+						onDrop={handleDrop}
+						onChange={(e) => setImage(e.target.value)}
+						value={image}>
+						{({ getRootProps, getInputProps }) => (
+							<section>
+								<div {...getRootProps({ className: "dropzone" })}>
+									<span className="text-center text-gray-400">
+										<Image
+											src={uploadIcon}
+											alt="upload icon"
+											width={50}
+											height={50}
+										/>
+									</span>
+									<p className="text-center text-gray-400">
+										Drag 'n' drop some files here, or click to select files
+									</p>
+									<input {...getInputProps()} />
+								</div>
+							</section>
+						)}
+					</Dropzone>
+				</Container>
 
 				<button type="submit" className="btn-primary mt-5">
 					Save
