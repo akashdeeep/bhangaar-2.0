@@ -10,6 +10,7 @@ import { headers } from "next/dist/client/components/headers";
 import { Cloudinary } from "@cloudinary/url-gen";
 import Dropzone from "react-dropzone";
 import { Container } from "reactstrap";
+import deleteIcon from "../public/delete(1).png";
 
 export default function ProductForm(props) {
 	console.log(props.product, "props.product");
@@ -97,8 +98,8 @@ export default function ProductForm(props) {
 						setProduct({ ...product, price: Number(e.target.value) })
 					}
 				/>
-				<Container>
-					<h1 className="text-center text-2xl font-bold">Upload Images</h1>
+				<Container className="flex flex-col justify-center items-center gap-2">
+					<label>Product Images</label>
 					<Dropzone
 						className="flex justify-center items-center border-2 border-dashed border-gray-400 rounded-lg h-32 w-96"
 						onDrop={handleDrop}
@@ -106,8 +107,10 @@ export default function ProductForm(props) {
 						value={image}>
 						{({ getRootProps, getInputProps }) => (
 							<section>
-								<div {...getRootProps({ className: "dropzone" })}>
-									<span className="text-center text-gray-400">
+								<div
+									className="flex flex-col justify-center items-center"
+									{...getRootProps({ className: "dropzone" })}>
+									<span className="flex justify-center items-center">
 										<Image
 											src={uploadIcon}
 											alt="upload icon"
@@ -116,9 +119,42 @@ export default function ProductForm(props) {
 										/>
 									</span>
 									<p className="text-center text-gray-400">
-										Drag 'n' drop some files here, or click to select files
+										Drag 'n' drop some images here, or click to select images
 									</p>
 									<input {...getInputProps()} />
+									<div className="mt-5 flex justify-center items-center gap-2">
+										{product.images.map((image) => (
+											<div
+												className="flex justify-center items-center"
+												key={image}>
+												<Image
+													src={image}
+													alt="product image"
+													width={100}
+													height={100}
+												/>
+												<button
+													className="
+													flex justify-center items-center
+													"
+													onClick={() =>
+														setProduct({
+															...product,
+															images: product.images.filter(
+																(img) => img !== image
+															),
+														})
+													}>
+													<Image
+														src={deleteIcon}
+														alt="delete icon"
+														width={20}
+														height={20}
+													/>
+												</button>
+											</div>
+										))}
+									</div>
 								</div>
 							</section>
 						)}
