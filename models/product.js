@@ -1,6 +1,8 @@
 import { model, Schema, models } from "mongoose";
 
 const ProductSchema = new Schema({
+	userName: { type: String, required: true },
+	userEmail: { type: String, required: true },
 	name: { type: String, required: true },
 	price: { type: Number, required: true },
 	description: { type: String },

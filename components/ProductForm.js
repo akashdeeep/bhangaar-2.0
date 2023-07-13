@@ -11,11 +11,16 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import Dropzone from "react-dropzone";
 import { Container } from "reactstrap";
 import deleteIcon from "../public/delete(1).png";
+import { auto } from "@cloudinary/url-gen/qualifiers/quality";
 
 export default function ProductForm(props) {
-	console.log(props.product, "props.product");
+	const { data: session, status } = useSession();
+	const router = useRouter();
+
 	const [product, setProduct] = useState(
 		props.product || {
+			userName: session?.user?.name,
+			userEmail: session?.user?.email,
 			name: "",
 			description: "",
 			price: 0,
@@ -121,7 +126,7 @@ export default function ProductForm(props) {
 									<p className="text-center text-gray-400">
 										Drag 'n' drop some images here, or click to select images
 									</p>
-									<input {...getInputProps()} />
+									<input {...getInputProps()} className="hidden" />
 									<div className="mt-5 flex justify-center items-center gap-2">
 										{product.images.map((image) => (
 											<div
