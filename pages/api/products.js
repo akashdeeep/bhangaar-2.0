@@ -26,7 +26,7 @@ export default async function handle(req, res) {
 		product.name = req.body.name;
 		product.description = req.body.description;
 		product.price = req.body.price;
-		product.image = req.body.image;
+		product.images = req.body.images;
 		await product.save();
 		res.json(product);
 	}

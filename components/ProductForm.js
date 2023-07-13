@@ -11,7 +11,7 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import Dropzone from "react-dropzone";
 import { Container } from "reactstrap";
 import deleteIcon from "../public/delete(1).png";
-import { auto } from "@cloudinary/url-gen/qualifiers/quality";
+import { SyncLoader } from "react-spinners";
 
 export default function ProductForm(props) {
 	const { data: session, status } = useSession();
@@ -29,7 +29,7 @@ export default function ProductForm(props) {
 	);
 
 	const [image, setImage] = useState();
-	const [loading, setLoading] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const [goToProducts, setGoToProducts] = useState(false);
 
@@ -55,6 +55,7 @@ export default function ProductForm(props) {
 	}, [props.product]);
 
 	async function handleDrop(acceptedFiles) {
+		setIsUploading(true);
 		const formData = new FormData();
 		formData.append("file", acceptedFiles[0]);
 		formData.append("upload_preset", "bhangaar2");
@@ -68,7 +69,7 @@ export default function ProductForm(props) {
 		const data = await res.json();
 		console.log(data, "data");
 		setProduct({ ...product, images: [...product.images, data.secure_url] });
-		console.log(product, "product");
+		setIsUploading(false);
 	}
 
 	return (
@@ -132,16 +133,30 @@ export default function ProductForm(props) {
 											<div
 												className="flex justify-center items-center"
 												key={image}>
-												<Image
-													src={image}
-													alt="product image"
-													width={100}
-													height={100}
-												/>
-												<button
+												<div
 													className="
 													flex justify-center items-center
-													"
+													border-2 border-gray-400 rounded-lg h-32 w-32
+													relative
+
+												">
+													<Image
+														src={image}
+														alt="product image"
+														width={0}
+														height={0}
+														sizes="100%"
+														style={{
+															width: "100%",
+															height: "100%",
+															objectFit: "cover",
+														}}
+														blurDataURL={image}
+														placeholder="blur"
+													/>
+												</div>
+												<button
+													className="flex justify-center items-center"
 													onClick={() =>
 														setProduct({
 															...product,
@@ -160,6 +175,18 @@ export default function ProductForm(props) {
 											</div>
 										))}
 									</div>
+									{isUploading && (
+										<div
+											className="
+											flex justify-center items-center
+										">
+											<SyncLoader
+												color="green"
+												loading={isUploading}
+												size={10}
+											/>
+										</div>
+									)}
 								</div>
 							</section>
 						)}
