@@ -59,25 +59,20 @@ export default function Categories() {
 			{loading ? (
 				<p>Loading...</p>
 			) : (
-				<table className="table-auto w-full">
+				<table className="basic mt-4">
 					<thead>
 						<tr>
 							<th className="px-4 py-2">Category Name</th>
 						</tr>
 					</thead>
-					<body>
-						{categories.map((category) => (
-							<tr
-								key={category.id}
-								className="hover:bg-gray-100 focus-within:bg-gray-100">
-								<td className="border px-4 py-2">
-									<Link href={`/categories/${category.id}`}>
-										{category.name}
-									</Link>
-								</td>
-							</tr>
-						))}
-					</body>
+					<tbody>
+						{categories.length > 0 &&
+							categories.map((category) => (
+								<tr key={category.id}>
+									<td className="px-4 py-2">{category.name}</td>
+								</tr>
+							))}
+					</tbody>
 				</table>
 			)}
 		</Layout>

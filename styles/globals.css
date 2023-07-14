@@ -54,3 +54,20 @@ lable {
 	@apply transition duration-500 ease-in-out;
 	@apply flex flex-row items-center;
 }
+
+table.basic {
+	@apply border-collapse;
+	@apply w-full;
+	@apply text-left;
+	@apply divide-y divide-gray-200;
+	@apply shadow-md;
+	@apply bg-white;
+	@apply overflow-hidden;
+	@apply rounded-lg;
+	@apply text-sm;
+	@apply font-medium;
+	@apply transition duration-500 ease-in-out;
+	@aaply hover:shadow-lg;
+	@apply hover:bg-gray-50;
+	@apply text-black;
+}
