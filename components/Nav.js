@@ -5,6 +5,7 @@ import dashboardIcon from "../public/dashboard.png";
 import ordersIcon from "../public/order.png";
 import productsIcon from "../public/box.png";
 import settingsIcon from "../public/settings.png";
+import categoriesIcon from "../public/options.png";
 import { useRouter } from "next/router";
 
 export default function Nav() {
@@ -37,6 +38,22 @@ export default function Nav() {
 					<div className="flex gap-2 items-center space-x-2 p-2 hover:bg-green-700 rounded">
 						<Image src={productsIcon} alt="Products" width={24} height={24} />
 						<span>Products</span>
+					</div>
+				</Link>
+
+				<Link
+					href="/categories"
+					className={
+						pathname.includes("/categories") ? activeLink : inactiveLink
+					}>
+					<div className="flex gap-2 items-center space-x-2 p-2 hover:bg-green-700 rounded">
+						<Image
+							src={categoriesIcon}
+							alt="categories"
+							width={24}
+							height={24}
+						/>
+						<span>Categories</span>
 					</div>
 				</Link>
 
