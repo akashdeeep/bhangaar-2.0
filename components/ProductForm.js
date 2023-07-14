@@ -12,6 +12,7 @@ import Dropzone from "react-dropzone";
 import { Container } from "reactstrap";
 import deleteIcon from "../public/delete(1).png";
 import { SyncLoader } from "react-spinners";
+import { ReactSortable } from "react-sortablejs";
 
 export default function ProductForm(props) {
 	const { data: session, status } = useSession();
@@ -72,6 +73,25 @@ export default function ProductForm(props) {
 		setIsUploading(false);
 	}
 
+	async function deleteImage(image) {
+		const res = await fetch(
+			`https://api.cloudinary.com/v1_1/bhangaar2/image/destroy?public_id=${image}`,
+			{
+				method: "POST",
+			}
+		);
+		const data = await res.json();
+		console.log(data, "data");
+		setProduct({
+			...product,
+			images: product.images.filter((img) => img !== image),
+		});
+	}
+
+	function updateImageOrder(newImages) {
+		setProduct({ ...product, images: newImages });
+	}
+
 	return (
 		<form onSubmit={saveProduct}>
 			<div className="flex flex-col items-center gap-2">
@@ -129,6 +149,10 @@ export default function ProductForm(props) {
 									</p>
 									<input {...getInputProps()} className="hidden" />
 									<div className="mt-5 flex justify-center items-center gap-2">
+										{/* <ReactSortable
+										list={product.images}
+										setList={updateImageOrder}
+										className="flex justify-center items-center gap-2"> */}
 										{product.images.map((image) => (
 											<div
 												className="flex justify-center items-center"
@@ -174,6 +198,7 @@ export default function ProductForm(props) {
 												</button>
 											</div>
 										))}
+										{/* </ReactSortable> */}
 									</div>
 									{isUploading && (
 										<div
