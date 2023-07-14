@@ -13,6 +13,7 @@ const ProductSchema = new Schema({
 	dateUpdated: { type: Date, default: Date.now },
 	dateDeleted: { type: Date },
 	isDeleted: { type: Boolean, default: false },
+	viewCount: { type: Number, default: 0 },
 });
 
 export const Product = models.Product || model("Product", ProductSchema);

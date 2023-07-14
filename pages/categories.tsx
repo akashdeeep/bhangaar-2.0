@@ -4,28 +4,29 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import editIcon from "@/public/edit.png";
-import viewIcon from "@/public/analysis.png";
-import deleteIcon from "@/public/delete.png";
 import Image from "next/image";
 
 export default function Categories() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
+	const [categories, setCategories] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			const response = await axios.get("/api/categories");
+			setCategories(response.data);
+			setLoading(false);
+		};
+		fetchCategories();
+	}, []);
 
 	const [name, setName] = useState("");
 
 	async function saveCategory(e) {
 		e.preventDefault();
-		const body = {
-			name: e.target.name.value,
-		};
-		try {
-			await axios.post("/api/categories", body);
-			router.push("/categories");
-		} catch (error) {
-			console.log(error);
-		}
+		await axios.post("/api/categories", { name });
+		setName("");
 	}
 
 	return (
@@ -50,6 +51,35 @@ export default function Categories() {
 					Save
 				</button>
 			</form>
+
+			<h3 className="text-xl font-semibold tracking-wide mt-6 mb-2">
+				Existing categories
+			</h3>
+
+			{loading ? (
+				<p>Loading...</p>
+			) : (
+				<table className="table-auto w-full">
+					<thead>
+						<tr>
+							<th className="px-4 py-2">Category Name</th>
+						</tr>
+					</thead>
+					<body>
+						{categories.map((category) => (
+							<tr
+								key={category.id}
+								className="hover:bg-gray-100 focus-within:bg-gray-100">
+								<td className="border px-4 py-2">
+									<Link href={`/categories/${category.id}`}>
+										{category.name}
+									</Link>
+								</td>
+							</tr>
+						))}
+					</body>
+				</table>
+			)}
 		</Layout>
 	);
 }

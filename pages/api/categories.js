@@ -1,37 +1,18 @@
-import mongooseConnect from "../../dbConnect";
+import { Category } from "../../models/categories";
+import mongooseConnect from "../../lib/mongoose";
 import clientPromise from "../../lib/mongodb";
-import { Product } from "../../models/product";
 
 export default async function handle(req, res) {
 	const { method } = req;
 	await mongooseConnect();
-	const client = await clientPromise;
-	const db = await client.db();
-	const collection = await db.collection("Products");
+
 	if (method == "POST") {
 		const { name } = req.body;
+		const category = await Category.create({ name });
+		res.json(category);
 	}
 	if (method == "GET") {
-		if (req.query?.id) {
-			res.json(await Product.findById(req.query.id));
-			// console.log(req.query.id);
-		} else {
-			res.json(await Product.find({}));
-		}
-	}
-	if (method == "PUT") {
-		const product = await Product.findById(req.body._id);
-		product.name = req.body.name;
-		product.description = req.body.description;
-		product.price = req.body.price;
-		product.images = req.body.images;
-		await product.save();
-		res.json(product);
-	}
-	if (method == "DELETE") {
-		if (req.query?.id) {
-			await Product.deleteOne({ _id: req.query?.id });
-			res.json({ message: "Product deleted" });
-		}
+		const categories = await Category.find({});
+		res.json(categories);
 	}
 }
