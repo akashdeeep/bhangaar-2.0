@@ -7,8 +7,9 @@ export default async function handle(req, res) {
 	await mongooseConnect();
 
 	if (method == "POST") {
-		const { name } = req.body;
-		const category = await Category.create({ name });
+		const { name, parent } = req.body;
+
+		const category = await Category.create({ name, parent });
 		res.json(category);
 	}
 	if (method == "GET") {

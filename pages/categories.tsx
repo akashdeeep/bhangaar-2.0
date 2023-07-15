@@ -11,22 +11,24 @@ export default function Categories() {
 	const { data: session, status } = useSession();
 	const [categories, setCategories] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [name, setName] = useState("");
+	const [parent, setParent] = useState(0);
 
 	useEffect(() => {
-		const fetchCategories = async () => {
-			const response = await axios.get("/api/categories");
-			setCategories(response.data);
-			setLoading(false);
-		};
 		fetchCategories();
 	}, []);
 
-	const [name, setName] = useState("");
+	const fetchCategories = async () => {
+		const response = await axios.get("/api/categories");
+		setCategories(response.data);
+		setLoading(false);
+	};
 
 	async function saveCategory(e) {
 		e.preventDefault();
-		await axios.post("/api/categories", { name });
+		await axios.post("/api/categories", { name, parent });
 		setName("");
+		fetchCategories();
 	}
 
 	return (
@@ -47,6 +49,18 @@ export default function Categories() {
 					onChange={(e) => setName(e.target.value)}
 					value={name}
 				/>
+				<select
+					className="select m-2"
+					value={parent}
+					onChange={(e) => setParent(e.target.value)}>
+					<option value="0">No parent category</option>
+					{categories.length > 0 &&
+						categories.map((category) => (
+							<option key={category.id} value={category.id}>
+								{category.name}
+							</option>
+						))}
+				</select>
 				<button type="submit" className="btn-primary">
 					Save
 				</button>
