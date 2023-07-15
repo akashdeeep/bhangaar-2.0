@@ -5,14 +5,17 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { withSwal } from "react-sweetalert2";
 
 export default function Categories() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
+	const [editedCategory, setEditedCategory] = useState(null);
 	const [categories, setCategories] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [name, setName] = useState("");
-	const [parent, setParent] = useState(0);
+	const [parentCategory, setParentCategory] = useState("");
+	const [properties, setProperties] = useState([]);
 
 	useEffect(() => {
 		fetchCategories();
@@ -24,11 +27,83 @@ export default function Categories() {
 		setLoading(false);
 	};
 
-	async function saveCategory(e) {
-		e.preventDefault();
-		await axios.post("/api/categories", { name, parent });
+	async function saveCategory(ev) {
+		ev.preventDefault();
+		const data = {
+			name,
+			parentCategory,
+			properties: properties.map((p) => ({
+				name: p.name,
+				values: p.values.split(","),
+			})),
+		};
+		if (editedCategory) {
+			data._id = editedCategory._id;
+			await axios.put("/api/categories", data);
+			setEditedCategory(null);
+		} else {
+			await axios.post("/api/categories", data);
+		}
 		setName("");
+		setParentCategory("");
+		setProperties([]);
 		fetchCategories();
+	}
+	function editCategory(category) {
+		setEditedCategory(category);
+		setName(category.name);
+		setParentCategory(category.parent?._id);
+		setProperties(
+			category.properties.map(({ name, values }) => ({
+				name,
+				values: values.join(","),
+			}))
+		);
+	}
+	function deleteCategory(category) {
+		swal
+			.fire({
+				title: "Are you sure?",
+				text: `Do you want to delete ${category.name}?`,
+				showCancelButton: true,
+				cancelButtonText: "Cancel",
+				confirmButtonText: "Yes, Delete!",
+				confirmButtonColor: "#d55",
+				reverseButtons: true,
+			})
+			.then(async (result) => {
+				if (result.isConfirmed) {
+					const { _id } = category;
+					await axios.delete("/api/categories?_id=" + _id);
+					fetchCategories();
+				}
+			});
+	}
+	function addProperty() {
+		setProperties((prev) => {
+			return [...prev, { name: "", values: "" }];
+		});
+	}
+	function handlePropertyNameChange(index, property, newName) {
+		setProperties((prev) => {
+			const properties = [...prev];
+			properties[index].name = newName;
+			return properties;
+		});
+	}
+	function handlePropertyValuesChange(index, property, newValues) {
+		setProperties((prev) => {
+			const properties = [...prev];
+			properties[index].values = newValues;
+			return properties;
+		});
+	}
+	function removeProperty(indexToRemove) {
+		setProperties((prev) => {
+			return [...prev].filter((p, pIndex) => {
+				return pIndex !== indexToRemove;
+			});
+		});
 	}
 
 	return (
@@ -42,25 +117,27 @@ export default function Categories() {
 				New category name
 			</label>
 			<form onSubmit={saveCategory} className="flex gap-2">
-				<input
-					className="border border-gray-300  m-0"
-					type="text"
-					placeholder="Category name"
-					onChange={(e) => setName(e.target.value)}
-					value={name}
-				/>
-				<select
-					className="select m-2"
-					value={parent}
-					onChange={(e) => setParent(e.target.value)}>
-					<option value="0">No parent category</option>
-					{categories.length > 0 &&
-						categories.map((category) => (
-							<option key={category.id} value={category.id}>
-								{category.name}
-							</option>
-						))}
-				</select>
+				<div>
+					<input
+						className="border border-gray-300  m-0"
+						type="text"
+						placeholder="Category name"
+						onChange={(e) => setName(e.target.value)}
+						value={name}
+					/>
+					<select
+						onChange={(ev) => setParentCategory(ev.target.value)}
+						value={parentCategory}>
+						<option value="">No parent category</option>
+						{categories.length > 0 &&
+							categories.map((category) => (
+								<option key={category._id} value={category._id}>
+									{category.name}
+								</option>
+							))}
+					</select>
+				</div>
+
 				<button type="submit" className="btn-primary">
 					Save
 				</button>
@@ -77,6 +154,7 @@ export default function Categories() {
 					<thead>
 						<tr>
 							<th className="px-4 py-2">Category Name</th>
+							<th className="px-4 py-2">Parent Category</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -84,6 +162,9 @@ export default function Categories() {
 							categories.map((category) => (
 								<tr key={category.id}>
 									<td className="px-4 py-2">{category.name}</td>
+									<td className="px-4 py-2">
+										{category.parent && category.parent.name}
+									</td>
 								</tr>
 							))}
 					</tbody>
