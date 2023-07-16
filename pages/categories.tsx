@@ -155,6 +155,7 @@ export default function Categories() {
 						<tr>
 							<th className="px-4 py-2">Category Name</th>
 							<th className="px-4 py-2">Parent Category</th>
+							<th className="px-4 py-2">Actions</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -164,6 +165,18 @@ export default function Categories() {
 									<td className="px-4 py-2">{category.name}</td>
 									<td className="px-4 py-2">
 										{category.parent && category.parent.name}
+									</td>
+									<td className="px-4 py-2 flex gap-2 justify-end">
+										<button
+											onClick={() => editCategory(category)}
+											className="btn-primary">
+											Edit
+										</button>
+										<button
+											onClick={() => deleteCategory(category)}
+											className="btn-primary">
+											Delete
+										</button>
 									</td>
 								</tr>
 							))}

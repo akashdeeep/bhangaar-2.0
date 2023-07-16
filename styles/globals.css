@@ -70,6 +70,7 @@ table.basic {
 	@aaply hover:shadow-lg;
 	@apply hover:bg-gray-50;
 	@apply text-black;
+	@apply border border-gray-200;
 }
 
 select {
