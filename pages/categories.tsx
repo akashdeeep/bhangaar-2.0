@@ -114,7 +114,9 @@ export default function Categories() {
 			<label
 				htmlFor="category"
 				className="block text-md font-medium mb-2 mt-10">
-				New category name
+				{editedCategory
+					? `Edit category ${editedCategory.name}`
+					: "Create new category"}
 			</label>
 			<form onSubmit={saveCategory} className="flex gap-2">
 				<div>
