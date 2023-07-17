@@ -13,6 +13,7 @@ import { Container } from "reactstrap";
 import deleteIcon from "../public/delete(1).png";
 import { SyncLoader } from "react-spinners";
 import { ReactSortable } from "react-sortablejs";
+import BarLoader from "react-spinners/BarLoader";
 
 export default function ProductForm(props) {
 	const { data: session, status } = useSession();
@@ -26,13 +27,29 @@ export default function ProductForm(props) {
 			description: "",
 			price: 0,
 			images: [],
+			category: "",
+			properties: [],
 		}
 	);
 
 	const [image, setImage] = useState();
 	const [isUploading, setIsUploading] = useState(false);
-
+	const [categories, setCategories] = useState([]);
 	const [goToProducts, setGoToProducts] = useState(false);
+
+	useEffect(() => {
+		if (!session) {
+			router.push("/login");
+		}
+	}, [session]);
+
+	useEffect(() => {
+		async function getCategories() {
+			const res = await axios.get("/api/categories");
+			setCategories(res.data);
+		}
+		getCategories();
+	}, []);
 
 	async function saveProduct(e) {
 		e.preventDefault();
@@ -103,6 +120,21 @@ export default function ProductForm(props) {
 					value={product.name}
 					onChange={(e) => setProduct({ ...product, name: e.target.value })}
 				/>
+				<label className="mb-5">Product Category</label>
+				<select
+					className="mb-5"
+					value={product.category}
+					onChange={(e) =>
+						setProduct({ ...product, category: e.target.value })
+					}>
+					<option value="">Uncategorized</option>
+					{categories.map((category) => (
+						<option key={category._id} value={category._id}>
+							{category.name}
+						</option>
+					))}
+				</select>
+
 				<label>Product Description</label>
 				<textarea
 					className="mb-5"
