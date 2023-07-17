@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { withSwal } from "react-sweetalert2";
 
-export default function Categories() {
+function Categories({ swal }) {
 	const router = useRouter();
 	const { data: session, status } = useSession();
 	const [editedCategory, setEditedCategory] = useState(null);
@@ -188,3 +188,7 @@ export default function Categories() {
 		</Layout>
 	);
 }
+
+export default withSwal(({ swal }, ref) => {
+	return <Categories swal={swal} ref={ref} />;
+});
