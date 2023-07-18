@@ -118,8 +118,8 @@ function Categories({ swal }) {
 					? `Edit category ${editedCategory.name}`
 					: "Create new category"}
 			</label>
-			<form onSubmit={saveCategory} className="flex gap-2">
-				<div className="flex flex-co gap-2">
+			<form onSubmit={saveCategory} className="flex flex-col gap-2">
+				<div className="flex flex-row gap-2">
 					<input
 						className="border border-gray-300  m-0"
 						type="text"
@@ -140,7 +140,7 @@ function Categories({ swal }) {
 					</select>
 				</div>
 
-				<button type="submit" className="btn-primary">
+				<button type="submit" className="btn-primary max-w-fit">
 					Save
 				</button>
 			</form>
