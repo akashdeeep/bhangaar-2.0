@@ -119,7 +119,7 @@ function Categories({ swal }) {
 					: "Create new category"}
 			</label>
 			<form onSubmit={saveCategory} className="flex gap-2">
-				<div>
+				<div className="flex flex-col gap-2">
 					<input
 						className="border border-gray-300  m-0"
 						type="text"
