@@ -121,7 +121,7 @@ function Categories({ swal }) {
 			<form onSubmit={saveCategory} className="flex flex-col gap-2">
 				<div className="flex flex-row gap-2">
 					<input
-						className="border border-gray-300  m-0"
+						className="border border-gray-300 "
 						type="text"
 						placeholder="Category name"
 						onChange={(e) => setName(e.target.value)}
@@ -138,6 +138,15 @@ function Categories({ swal }) {
 								</option>
 							))}
 					</select>
+				</div>
+				<div>
+					<label className="">Properties</label>
+					<button
+						type="button"
+						className="btn-secondary max-w-fit"
+						onClick={addProperty}>
+						Add new property
+					</button>
 				</div>
 
 				<button type="submit" className="btn-primary max-w-fit">
