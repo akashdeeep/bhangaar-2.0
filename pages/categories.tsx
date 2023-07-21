@@ -143,10 +143,44 @@ function Categories({ swal }) {
 					<label className="">Properties</label>
 					<button
 						type="button"
-						className="btn-secondary max-w-fit"
+						className="btn-secondary
+						ml-5
+					"
 						onClick={addProperty}>
 						Add new property
 					</button>
+					<div className="flex flex-col gap-2 mt-2">
+						{properties.map((property, index) => (
+							<div key={index} className="flex flex-row gap-2">
+								<input
+									className="border border-gray-300 "
+									type="text"
+									placeholder="Property name"
+									onChange={(e) =>
+										handlePropertyNameChange(index, property, e.target.value)
+									}
+									value={property.name}
+								/>
+								<input
+									className="border border-gray-300 "
+									type="text"
+									placeholder="Property values"
+									onChange={(e) =>
+										handlePropertyValuesChange(index, property, e.target.value)
+									}
+									value={property.values}
+								/>
+								<button
+									type="button"
+									className="btn-secondary
+								ml-5
+							"
+									onClick={() => removeProperty(index)}>
+									Remove
+								</button>
+							</div>
+						))}
+					</div>
 				</div>
 
 				<button type="submit" className="btn-primary max-w-fit">
