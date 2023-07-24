@@ -45,6 +45,22 @@ lable {
 	@apply px-4 py-2 rounded-md;
 	@apply hover:bg-blue-600;
 }
+.btn-primary-red {
+	@apply bg-red-500 text-white;
+	@apply px-4 py-2 rounded-md;
+	@apply hover:bg-red-600;
+}
+
+.btn-primary-small {
+	@apply bg-blue-500 text-white;
+	@apply px-2 py-1 rounded-md;
+	@apply hover:bg-blue-600;
+}
+.btn-primary-red-small {
+	@apply bg-red-500 text-white;
+	@apply px-2 py-1 rounded-md;
+	@apply hover:bg-red-600;
+}
 
 .table-btn-primary {
 	@apply bg-blue-500 text-white;

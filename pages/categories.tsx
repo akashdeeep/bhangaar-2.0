@@ -1,32 +1,22 @@
 import Layout from "@/components/Layout";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import Image from "next/image";
 import { withSwal } from "react-sweetalert2";
 
 function Categories({ swal }) {
-	const router = useRouter();
-	const { data: session, status } = useSession();
 	const [editedCategory, setEditedCategory] = useState(null);
-	const [categories, setCategories] = useState([]);
-	const [loading, setLoading] = useState(true);
 	const [name, setName] = useState("");
 	const [parentCategory, setParentCategory] = useState("");
+	const [categories, setCategories] = useState([]);
 	const [properties, setProperties] = useState([]);
-
 	useEffect(() => {
 		fetchCategories();
 	}, []);
-
-	const fetchCategories = async () => {
-		const response = await axios.get("/api/categories");
-		setCategories(response.data);
-		setLoading(false);
-	};
-
+	function fetchCategories() {
+		axios.get("/api/categories").then((result) => {
+			setCategories(result.data);
+		});
+	}
 	async function saveCategory(ev) {
 		ev.preventDefault();
 		const data = {
@@ -105,26 +95,35 @@ function Categories({ swal }) {
 			});
 		});
 	}
-
 	return (
 		<Layout>
-			<h1 className="text-2xl font-semibold tracking-wide mt-6 mb-2">
+			<h1
+				className="text-2xl
+			font-bold
+			mb-4
+			
+			">
 				Categories
 			</h1>
 			<label
-				htmlFor="category"
-				className="block text-md font-medium mb-2 mt-10">
+				className="block
+			font-semibold
+			mb-2
+			">
 				{editedCategory
 					? `Edit category ${editedCategory.name}`
 					: "Create new category"}
 			</label>
-			<form onSubmit={saveCategory} className="flex flex-col gap-2">
-				<div className="flex flex-row gap-2">
+			<form onSubmit={saveCategory}>
+				<div
+					className="flex
+				mb-2
+				gap-1
+				">
 					<input
-						className="border border-gray-300 "
 						type="text"
-						placeholder="Category name"
-						onChange={(e) => setName(e.target.value)}
+						placeholder={"Category name"}
+						onChange={(ev) => setName(ev.target.value)}
 						value={name}
 					/>
 					<select
@@ -139,87 +138,107 @@ function Categories({ swal }) {
 							))}
 					</select>
 				</div>
-				<div>
-					<label className="">Properties</label>
+				<div className="">
+					<label
+						className="
+					block
+					font-semibold
+					mb-2
+					">
+						Properties
+					</label>
 					<button
+						onClick={addProperty}
 						type="button"
-						className="btn-secondary
-						ml-5
-					"
-						onClick={addProperty}>
+						className="btn-primary text-sm mb-2">
 						Add new property
 					</button>
-					<div className="flex flex-col gap-2 mt-2">
-						{properties.map((property, index) => (
-							<div key={index} className="flex flex-row gap-2">
+					{properties.length > 0 &&
+						properties.map((property, index) => (
+							<div key={property.name} className="flex gap-1 mb-2">
 								<input
-									className="border border-gray-300 "
 									type="text"
-									placeholder="Property name"
-									onChange={(e) =>
-										handlePropertyNameChange(index, property, e.target.value)
-									}
 									value={property.name}
+									className="mb-0"
+									onChange={(ev) =>
+										handlePropertyNameChange(index, property, ev.target.value)
+									}
+									placeholder="property name (example: color)"
 								/>
 								<input
-									className="border border-gray-300 "
 									type="text"
-									placeholder="Property values"
-									onChange={(e) =>
-										handlePropertyValuesChange(index, property, e.target.value)
+									className="mb-0"
+									onChange={(ev) =>
+										handlePropertyValuesChange(index, property, ev.target.value)
 									}
 									value={property.values}
+									placeholder="values, comma separated"
 								/>
 								<button
+									onClick={() => removeProperty(index)}
 									type="button"
-									className="btn-secondary
-								ml-5
-							"
-									onClick={() => removeProperty(index)}>
+									className="btn-primary-red text-sm mb-0
+									">
 									Remove
 								</button>
 							</div>
 						))}
-					</div>
 				</div>
-
-				<button type="submit" className="btn-primary max-w-fit">
-					Save
-				</button>
+				<div className="flex gap-1">
+					{editedCategory && (
+						<button
+							type="button"
+							onClick={() => {
+								setEditedCategory(null);
+								setName("");
+								setParentCategory("");
+								setProperties([]);
+							}}
+							className="btn-primary">
+							Cancel
+						</button>
+					)}
+					<button
+						type="submit"
+						className="btn-primary
+						mr-1
+						mb-2
+						mt-2
+					">
+						Save
+					</button>
+				</div>
 			</form>
-
-			<h3 className="text-xl font-semibold tracking-wide mt-6 mb-2">
-				Existing categories
-			</h3>
-
-			{loading ? (
-				<p>Loading...</p>
-			) : (
-				<table className="basic mt-4">
+			{!editedCategory && (
+				<table
+					className="basic mt-4
+				table-auto
+				border-collapse
+				border
+				border-black
+				">
 					<thead>
 						<tr>
-							<th className="px-4 py-2">Category Name</th>
-							<th className="px-4 py-2">Parent Category</th>
-							<th className="px-4 py-2">Actions</th>
+							<td>Category name</td>
+							<td>Parent category</td>
+							<td></td>
 						</tr>
 					</thead>
 					<tbody>
 						{categories.length > 0 &&
 							categories.map((category) => (
-								<tr key={category.id}>
-									<td className="px-4 py-2">{category.name}</td>
-									<td className="px-4 py-2">
-										{category.parent && category.parent.name}
-									</td>
-									<td className="px-4 py-2 flex gap-2 justify-end">
+								<tr key={category._id}>
+									<td>{category.name}</td>
+									<td>{category?.parent?.name}</td>
+									<td>
 										<button
 											onClick={() => editCategory(category)}
-											className="btn-primary">
+											className="btn-primary mr-1">
 											Edit
 										</button>
 										<button
 											onClick={() => deleteCategory(category)}
-											className="btn-primary">
+											className="btn-primary-red">
 											Delete
 										</button>
 									</td>
@@ -232,6 +251,4 @@ function Categories({ swal }) {
 	);
 }
 
-export default withSwal(({ swal }, ref) => {
-	return <Categories swal={swal} ref={ref} />;
-});
+export default withSwal(({ swal }, ref) => <Categories swal={swal} />);

@@ -28,7 +28,14 @@ export default function Products() {
 					Add new Product
 				</Link>
 
-				<table className="w-full mt-6 border-collapse border border-black">
+				<table
+					className="basic
+				table-auto
+				border-collapse
+				border
+				border-black
+				mt-6
+				">
 					<thead>
 						<tr className="border-collapse border border-black">
 							<th className="border-collapse border border-black">Name</th>
