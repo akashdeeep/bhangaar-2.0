@@ -36,6 +36,8 @@ export default function ProductForm(props) {
 	const [isUploading, setIsUploading] = useState(false);
 	const [categories, setCategories] = useState([]);
 	const [goToProducts, setGoToProducts] = useState(false);
+	const [productProperties, setProductProperties] = useState({});
+	const [category, setCategory] = useState("");
 
 	useEffect(() => {
 		if (!session) {
@@ -109,6 +111,27 @@ export default function ProductForm(props) {
 		setProduct({ ...product, images: newImages });
 	}
 
+	function setProductProp(propName, value) {
+		setProductProperties((prev) => {
+			const newProductProps = { ...prev };
+			newProductProps[propName] = value;
+			return newProductProps;
+		});
+	}
+
+	const propertiesToFill = [];
+	if (categories.length > 0 && category) {
+		let catInfo = categories.find(({ _id }) => _id === category);
+		propertiesToFill.push(...catInfo.properties);
+		while (catInfo?.parent?._id) {
+			const parentCat = categories.find(
+				({ _id }) => _id === catInfo?.parent?._id
+			);
+			propertiesToFill.push(...parentCat.properties);
+			catInfo = parentCat;
+		}
+	}
+
 	return (
 		<form onSubmit={saveProduct}>
 			<div className="flex flex-col items-center gap-2">
@@ -134,6 +157,7 @@ export default function ProductForm(props) {
 						</option>
 					))}
 				</select>
+				{categories.length > 0 && <div></div>}
 
 				<label>Product Description</label>
 				<textarea
