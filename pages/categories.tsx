@@ -97,14 +97,28 @@ function Categories({ swal }) {
 	}
 	return (
 		<Layout>
-			<h1>Categories</h1>
-			<label>
+			<h1
+				className="text-2xl
+			font-bold
+			mb-4
+			">
+				Categories
+			</h1>
+			<label
+				className="block
+			font-semibold
+			mb-2
+			">
 				{editedCategory
 					? `Edit category ${editedCategory.name}`
 					: "Create new category"}
 			</label>
 			<form onSubmit={saveCategory}>
-				<div className="flex gap-1">
+				<div
+					className="flex
+				mb-2
+				gap-1
+				">
 					<input
 						type="text"
 						placeholder={"Category name"}
@@ -123,12 +137,19 @@ function Categories({ swal }) {
 							))}
 					</select>
 				</div>
-				<div className="mb-2">
-					<label className="block">Properties</label>
+				<div className="">
+					<label
+						className="
+					block
+					font-semibold
+					mb-2
+					">
+						Properties
+					</label>
 					<button
 						onClick={addProperty}
 						type="button"
-						className="btn-default text-sm mb-2">
+						className="btn-primary text-sm mb-2">
 						Add new property
 					</button>
 					{properties.length > 0 &&
@@ -155,7 +176,8 @@ function Categories({ swal }) {
 								<button
 									onClick={() => removeProperty(index)}
 									type="button"
-									className="btn-red">
+									className="btn-primary-red text-sm mb-0
+									">
 									Remove
 								</button>
 							</div>
@@ -171,17 +193,29 @@ function Categories({ swal }) {
 								setParentCategory("");
 								setProperties([]);
 							}}
-							className="btn-default">
+							className="btn-primary">
 							Cancel
 						</button>
 					)}
-					<button type="submit" className="btn-primary py-1">
+					<button
+						type="submit"
+						className="btn-primary
+						mr-1
+						mb-2
+						mt-2
+					">
 						Save
 					</button>
 				</div>
 			</form>
 			{!editedCategory && (
-				<table className="basic mt-4">
+				<table
+					className="basic mt-4
+				table-auto
+				border-collapse
+				border
+				border-black
+				">
 					<thead>
 						<tr>
 							<td>Category name</td>
@@ -198,12 +232,12 @@ function Categories({ swal }) {
 									<td>
 										<button
 											onClick={() => editCategory(category)}
-											className="btn-default mr-1">
+											className="btn-primary mr-1">
 											Edit
 										</button>
 										<button
 											onClick={() => deleteCategory(category)}
-											className="btn-red">
+											className="btn-primary-red">
 											Delete
 										</button>
 									</td>
