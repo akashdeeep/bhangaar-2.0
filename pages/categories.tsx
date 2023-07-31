@@ -4,45 +4,47 @@ import axios from "axios";
 import { withSwal } from "react-sweetalert2";
 
 function Categories({ swal }) {
-	const [editedCategory, setEditedCategory] = useState(null);
+	const [categories, setCategories] = useState([]);
 	const [name, setName] = useState("");
 	const [parentCategory, setParentCategory] = useState("");
-	const [categories, setCategories] = useState([]);
 	const [properties, setProperties] = useState([]);
+	const [editedCategory, setEditedCategory] = useState(null);
+
 	useEffect(() => {
 		fetchCategories();
 	}, []);
-	function fetchCategories() {
-		axios.get("/api/categories").then((result) => {
-			setCategories(result.data);
-		});
+
+	async function fetchCategories() {
+		const { data } = await axios.get("/api/categories");
+		setCategories(data);
 	}
+
 	async function saveCategory(ev) {
 		ev.preventDefault();
-		const data = {
+		const category = {
 			name,
-			parentCategory,
-			properties: properties.map((p) => ({
-				name: p.name,
-				values: p.values.split(","),
+			parent: parentCategory,
+			properties: properties.map(({ name, values }) => ({
+				name,
+				values: values.split(",").map((v) => v.trim()),
 			})),
 		};
 		if (editedCategory) {
-			data._id = editedCategory._id;
-			await axios.put("/api/categories", data);
-			setEditedCategory(null);
+			await axios.put("/api/categories?_id=" + editedCategory._id, category);
 		} else {
-			await axios.post("/api/categories", data);
+			await axios.post("/api/categories", category);
 		}
+		setEditedCategory(null);
 		setName("");
 		setParentCategory("");
 		setProperties([]);
 		fetchCategories();
 	}
+
 	function editCategory(category) {
 		setEditedCategory(category);
 		setName(category.name);
-		setParentCategory(category.parent?._id);
+		setParentCategory(category.parent?._id || "");
 		setProperties(
 			category.properties.map(({ name, values }) => ({
 				name,
@@ -50,6 +52,7 @@ function Categories({ swal }) {
 			}))
 		);
 	}
+
 	function deleteCategory(category) {
 		swal
 			.fire({
@@ -69,11 +72,13 @@ function Categories({ swal }) {
 				}
 			});
 	}
+
 	function addProperty() {
 		setProperties((prev) => {
 			return [...prev, { name: "", values: "" }];
 		});
 	}
+
 	function handlePropertyNameChange(index, property, newName) {
 		setProperties((prev) => {
 			const properties = [...prev];
@@ -81,6 +86,7 @@ function Categories({ swal }) {
 			return properties;
 		});
 	}
+
 	function handlePropertyValuesChange(index, property, newValues) {
 		setProperties((prev) => {
 			const properties = [...prev];
@@ -158,19 +164,19 @@ function Categories({ swal }) {
 								<input
 									type="text"
 									value={property.name}
-									className="mb-0"
 									onChange={(ev) =>
 										handlePropertyNameChange(index, property, ev.target.value)
 									}
+									className="mb-0"
 									placeholder="property name (example: color)"
 								/>
 								<input
 									type="text"
 									className="mb-0"
+									value={property.values}
 									onChange={(ev) =>
 										handlePropertyValuesChange(index, property, ev.target.value)
 									}
-									value={property.values}
 									placeholder="values, comma separated"
 								/>
 								<button
