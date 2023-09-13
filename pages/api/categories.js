@@ -7,8 +7,18 @@ export default async function handle(req, res) {
 	await mongooseConnect();
 	await isAdminRequest(req, res);
 
-	if (method === "GET") {
-		res.json(await Category.find().populate("parent"));
+	if (method == "GET") {
+		// find all categories
+		try {
+			var categories = await Category.find({});
+			// console.log("999999999999999", typeof categories);
+			// console.log({ categories });
+			res.json(categories);
+		} catch (error) {
+			// Handle any errors that might occur during Category.find()
+			// console.error("-------------------------", error);
+			res.status(500).json({ error: "Internal server error" });
+		}
 	}
 
 	if (method === "POST") {

@@ -7,7 +7,7 @@ export default async function handle(req, res) {
 	await mongooseConnect();
 	const client = await clientPromise;
 	const db = await client.db();
-	const collection = await db.collection("Products");
+	// const collection = await db.collection("Products");
 	if (method == "POST") {
 		const product = new Product(req.body);
 		await product.save();
@@ -18,6 +18,7 @@ export default async function handle(req, res) {
 			res.json(await Product.findById(req.query.id));
 			// console.log(req.query.id);
 		} else {
+			// console.log("products called *****************************");
 			res.json(await Product.find({}));
 		}
 	}

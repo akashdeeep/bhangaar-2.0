@@ -56,7 +56,7 @@ export default function Products() {
 								</td>
 								<td className="border-collapse border border-black">
 									<div className="flex flex-row items-center justify-center gap-2">
-										<button
+										{/* <button
 											className="table-btn-primary"
 											onClick={() =>
 												router.push(`/products/view/${product._id}`)
@@ -68,7 +68,7 @@ export default function Products() {
 												height={24}
 											/>
 											View
-										</button>
+										</button> */}
 										<button
 											className="table-btn-primary"
 											onClick={() =>

@@ -53,33 +53,33 @@ function Categories({ swal }) {
 		);
 	}
 
-	function deleteCategory(category) {
-		swal
-			.fire({
-				title: "Are you sure?",
-				text: `Do you want to delete ${category.name}?`,
-				showCancelButton: true,
-				cancelButtonText: "Cancel",
-				confirmButtonText: "Yes, Delete!",
-				confirmButtonColor: "#d55",
-				reverseButtons: true,
-			})
-			.then(async (result) => {
-				if (result.isConfirmed) {
-					const { _id } = category;
-					await axios.delete("/api/categories?_id=" + _id);
-					fetchCategories();
-				}
-			});
+	async function deleteCategory(category) {
+		const { isConfirmed } = await swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+		});
+		if (isConfirmed) {
+			await axios.delete("/api/categories?_id=" + category._id);
+			fetchCategories();
+		}
 	}
 
 	function addProperty() {
 		setProperties((prev) => {
-			return [...prev, { name: "", values: "" }];
+			return [
+				...prev,
+				{
+					name: "",
+					values: "",
+				},
+			];
 		});
 	}
 
 	function handlePropertyNameChange(index, property, newName) {
+		console.log(index, property, newName);
 		setProperties((prev) => {
 			const properties = [...prev];
 			properties[index].name = newName;
@@ -94,13 +94,15 @@ function Categories({ swal }) {
 			return properties;
 		});
 	}
-	function removeProperty(indexToRemove) {
+
+	function removeProperty(index) {
 		setProperties((prev) => {
-			return [...prev].filter((p, pIndex) => {
-				return pIndex !== indexToRemove;
-			});
+			const properties = [...prev];
+			properties.splice(index, 1);
+			return properties;
 		});
 	}
+
 	return (
 		<Layout>
 			<h1
@@ -160,15 +162,15 @@ function Categories({ swal }) {
 					</button>
 					{properties.length > 0 &&
 						properties.map((property, index) => (
-							<div key={property.name} className="flex gap-1 mb-2">
+							<div key={property._id} className="flex gap-1 mb-2">
 								<input
 									type="text"
+									className="mb-0"
 									value={property.name}
 									onChange={(ev) =>
 										handlePropertyNameChange(index, property, ev.target.value)
 									}
-									className="mb-0"
-									placeholder="property name (example: color)"
+									placeholder="property name"
 								/>
 								<input
 									type="text"
@@ -180,10 +182,10 @@ function Categories({ swal }) {
 									placeholder="values, comma separated"
 								/>
 								<button
-									onClick={() => removeProperty(index)}
 									type="button"
-									className="btn-primary-red text-sm mb-0
-									">
+									onClick={() => removeProperty(index)}
+									className="btn-primary-red"
+									disabled={properties.length === 1}>
 									Remove
 								</button>
 							</div>
@@ -199,7 +201,10 @@ function Categories({ swal }) {
 								setParentCategory("");
 								setProperties([]);
 							}}
-							className="btn-primary">
+							className="btn-primary
+						mr-1
+						mb-2
+						mt-2">
 							Cancel
 						</button>
 					)}

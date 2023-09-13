@@ -35,7 +35,7 @@ export async function isAdminRequest(req, res) {
 		} else {
 			// Continue with the admin request handling here
 			// Your admin-specific logic goes here
-			res.status(200).json({ message: "Admin request successful" });
+			// res.status(200).json({ message: "Admin request successful" });
 		}
 	} catch (error) {
 		console.error("Error checking admin status:", error);
